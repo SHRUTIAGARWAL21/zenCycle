@@ -4,121 +4,75 @@ import { LuChevronsDown } from "react-icons/lu";
 function Feature({ icon, label, isMobile = false }) {
   return (
     <div
-      className={`bg-white rounded-2xl shadow-md px-3 md:px-4 py-2 text-center ${
-        isMobile ? "flex flex-col items-center" : ""
+      className={`bg-white rounded-2xl shadow-md px-3 md:px-4 py-2 text-center min-h-[120px] flex flex-col justify-center ${
+        isMobile ? "items-center" : ""
       }`}
     >
       <img
         src={icon}
         alt={label}
-        className={`$${
-          isMobile ? "w-16 h-16" : "w-[60%]"
+        className={`${
+          isMobile ? "w-40 h-16" : "w-[60%]"
         } mx-auto mb-2 object-contain rounded-xl`}
       />
-      <p className="text-sm text-gray-700">{label}</p>
+      <p className="text-xs text-gray-700">{label}</p>
     </div>
   );
 }
 
 function FeatureShowcase() {
   return (
-    <div className="min-h-screen py-12 px-4">
-      {/* Desktop/Tablet Layout (hidden on mobile) */}
-      <div className="hidden sm:block">
-        <div className="grid grid-cols-3 max-w-7xl mx-auto items-center">
-          {/* Left Column */}
-          <div className="grid grid-cols-2 gap-4 scale-[0.9] -translate-y-2">
-            <Feature icon="/images/clockcute.jpg" label="Time Flow" />
-            <Feature icon="/images/graph.avif" label="Mood Graphs" />
-            <Feature icon="/images/notify.webp" label="Reminders" />
-            <Feature icon="/images/tick.png" label="Goal Check" />
-          </div>
+    <div className="min-h-[450px] pt-4 px-4">
+      {/* Desktop View */}
+      <div className="hidden md:block">
+        <div className="max-w-8xl mx-64 md:mx-4  px-4 sm:px-6 md:px-28 lg:px-44  xl:px-64">
+          <div className="grid grid-cols-6 gap-6 items-center">
+            {/* Left Column - 2 grid units */}
+            <div className="col-span-2">
+              <div className="grid grid-cols-2 gap-4">
+                <Feature icon="/images/clockcute.png" label="Time Flow" />
+                <Feature icon="/images/graph.avif" label="Mood Graphs" />
+                <Feature icon="/images/notify.webp" label="Reminders" />
+                <Feature icon="/images/tick.png" label="Goal Check" />
+              </div>
+            </div>
 
-          {/* Center Mobile */}
-          <div className="mx-4">
-            <img
-              src="/images/mobileScreen.png"
-              alt="App screen"
-              className="w-[180px] sm:w-[180px] md:w-[220px] drop-shadow-2xl rounded-2xl"
-            />
-          </div>
+            {/* Center Phone Preview with same width as 2-column section */}
+            <div className="col-span-2  flex justify-center">
+              <div className="w-[220px] flex justify-center">
+                <img
+                  src="/images/mobileScreen.png"
+                  alt="App screen"
+                  className="w-full max-w-[220px] h-full drop-shadow-2xl rounded-2xl"
+                />
+              </div>
+            </div>
 
-          {/* Right Column */}
-          <div className="grid grid-cols-2 gap-4 scale-[0.9] -translate-y-2">
-            <Feature icon="/images/todo.png" label="To-Do Lists" />
-            <Feature icon="/images/start.webp" label="Start Tracker" />
-            <Feature icon="/images/journel.jpg" label="Daily Journal" />
-            <Feature icon="/images/chat.webp" label="Chat" />
+            {/* Right Column - 2 grid units */}
+            <div className="col-span-2">
+              <div className="grid grid-cols-2 gap-4">
+                <Feature icon="/images/todo.png" label="To-Do Lists" />
+                <Feature icon="/images/start.webp" label="Start Tracker" />
+                <Feature icon="/images/journel.png" label="Daily Journal" />
+                <Feature icon="/images/chat.png" label="Chat" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile View — 3 column stacked grid */}
-      <div className="sm:hidden">
-        {/* Mobile phone display */}
-        <div className="flex justify-center mb-8">
-          <div className="w-[200px] h-[400px] bg-black rounded-[2.5rem] p-2 shadow-2xl">
-            <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-[2rem] flex flex-col items-center justify-center text-white relative overflow-hidden">
-              {/* Phone notch */}
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl"></div>
-
-              {/* Schedule content */}
-              <div className="text-center mt-8">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 mx-auto">
-                  <div className="w-8 h-8 border-2 border-white rounded-lg flex items-center justify-center">
-                    <div className="w-1 h-1 bg-white rounded-full"></div>
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold mb-1">Schedule</h3>
-                <p className="text-sm opacity-90">your order</p>
-              </div>
-
-              {/* Floating elements */}
-              <div className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full"></div>
-              <div className="absolute bottom-4 left-4 w-6 h-6 bg-white/20 rounded-full"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Features grid */}
+      {/* Mobile View */}
+      <div className="md:hidden">
         <div className="grid grid-cols-3 gap-3 justify-items-center max-w-md mx-auto">
-          <Feature
-            icon="/images/clockcute.jpg"
-            label="Time Flow"
-            isMobile={true}
-          />
-          <Feature
-            icon="/images/graph.avif"
-            label="Mood Graphs"
-            isMobile={true}
-          />
-          <Feature
-            icon="/images/notify.webp"
-            label="Reminders"
-            isMobile={true}
-          />
-          <Feature icon="/images/tick.png" label="Goal Check" isMobile={true} />
-          <Feature
-            icon="/images/mobileScreen.png"
-            label="App Screen"
-            isMobile={true}
-          />
-          <Feature
-            icon="/images/todo.png"
-            label="To-Do Lists"
-            isMobile={true}
-          />
-          <Feature
-            icon="/images/start.webp"
-            label="Start Tracker"
-            isMobile={true}
-          />
-          <Feature
-            icon="/images/journel.jpg"
-            label="Daily Journal"
-            isMobile={true}
-          />
-          <Feature icon="/images/chat.webp" label="Chat" isMobile={true} />
+          <Feature icon="/images/clockcute.png" label="Time Flow" isMobile />
+          <Feature icon="/images/graph.avif" label="Mood Graphs" isMobile />
+          <Feature icon="/images/notify.webp" label="Reminders" isMobile />
+          <Feature icon="/images/tick.png" label="Goal Check" isMobile />
+          <Feature icon="/images/calander.png" label="App Screen" isMobile />
+          <Feature icon="/images/todo.png" label="To-Do Lists" isMobile />
+          <Feature icon="/images/start.webp" label="Start Tracker" isMobile />
+          <Feature icon="/images/journel.png" label="Daily Journal" isMobile />
+          <Feature icon="/images/chat.png" label="Chat" isMobile />
         </div>
       </div>
     </div>
@@ -209,7 +163,7 @@ export default function Home() {
         />
       </div>
 
-      <div className="bg-gradient-to-b from-[#cfb5cc] to-white pt-24 pb-20 px-4 text-center">
+      <div className="bg-gradient-to-b from-[#cfb5cc] to-white min-h-[500px] pt-24 px-4 text-center">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
           What’s waiting for you on{" "}
@@ -221,6 +175,40 @@ export default function Home() {
         </p>
 
         <FeatureShowcase />
+      </div>
+
+      <div className="bg-[#1a1a1a] text-gray-300 py-10 px-6 sm:px-12 lg:px-20 ">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 text-sm">
+          <div>
+            <h2 className="text-white text-2xl font-bold mb-4">Zencycle</h2>
+            <p className="text-gray-400">Mood + Task Tracker</p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-white mb-2">App</h3>
+            <p className="mb-1 hover:underline cursor-pointer">Features</p>
+            <p className="mb-1 hover:underline cursor-pointer">Download</p>
+            <p className="mb-1 hover:underline cursor-pointer">Premium</p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-white mb-2">Support</h3>
+            <p className="mb-1 hover:underline cursor-pointer">Help Center</p>
+            <p className="mb-1 hover:underline cursor-pointer">Feedback</p>
+            <p className="mb-1 hover:underline cursor-pointer">Bug Report</p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-white mb-2">Company</h3>
+            <p className="mb-1 hover:underline cursor-pointer">Blog</p>
+            <p className="mb-1 hover:underline cursor-pointer">Careers</p>
+            <p className="mb-1 hover:underline cursor-pointer">About</p>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-700 mt-10 pt-4 text-xs text-gray-500 text-center">
+          &copy; 2025 Zencycle. All rights reserved. Terms · Privacy · Cookies
+        </div>
       </div>
     </main>
   );
