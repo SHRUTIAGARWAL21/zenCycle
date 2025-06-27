@@ -14,13 +14,10 @@ export async function GET(request: NextRequest) {
 
     const now = new Date();
 
-    const moods = await MoodLog.find(
-      {
-        userId,
-        createdAt: { $gte: startOfDay, $lte: now },
-      },
-      "moodType moodLevel"
-    );
+    const moods = await MoodLog.find({
+      userId,
+      createdAt: { $gte: startOfDay, $lte: now },
+    });
 
     return NextResponse.json({ moods });
   } catch (error: any) {

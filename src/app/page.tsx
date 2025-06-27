@@ -1,5 +1,7 @@
 "use client";
 import { LuChevronsDown } from "react-icons/lu";
+import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 function Feature({ icon, label, isMobile = false }) {
   return (
@@ -80,6 +82,15 @@ function FeatureShowcase() {
 }
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleScroll = () => {
+    window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
+  };
+
+  function handleButtonClick() {
+    router.push("/signup");
+  }
   return (
     <main>
       <div className="bg-purple-200 overflow-hidden pt-12 pb-12">
@@ -93,12 +104,18 @@ export default function Home() {
           <h5 className="text-md font-serif sm:text-md md:text-xl mt-4 max-w-lg drop-shadow-md px-4">
             From task to thought — Zencycle keeps it all in sync.
           </h5>
-          <button className="mt-8 font-serif bg-[#f9f4fb] text-[#5e3a6b] font-semibold px-4 py-3 rounded-full shadow-lg hover:bg-[#f3e8f7] transition">
+          <button
+            className="mt-8 font-serif bg-[#f9f4fb] text-[#5e3a6b] font-semibold px-4 py-3 rounded-full shadow-lg hover:bg-[#f3e8f7] transition"
+            onClick={handleButtonClick}
+          >
             Start Tracking
           </button>
 
           {/* Scroll Down Icon */}
-          <div className="absolute bottom-6 flex items-center gap-2 animate-bounce text-[#764787]">
+          <div
+            className="absolute bottom-6 flex items-center gap-2 animate-bounce text-[#764787]"
+            onClick={handleScroll}
+          >
             <LuChevronsDown className="text-2xl" />
             <span className="text-base font-medium">Scroll down</span>
           </div>
