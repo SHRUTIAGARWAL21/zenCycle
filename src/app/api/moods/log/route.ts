@@ -2,6 +2,7 @@ import { connect } from "@/dbconfig/dbconfig";
 import { NextRequest, NextResponse } from "next/server";
 import MoodLog from "@/models/moodModel";
 import { getDataFromToken } from "@/helpers/getUser";
+import { updateStreak } from "@/helpers/updateStreak";
 connect();
 
 export async function POST(request: NextRequest) {
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     });
 
     await newMood.save();
-
+    await updateStreak(userId);
     return NextResponse.json({
       message: "Mood logged successfully!",
       mood: newMood,

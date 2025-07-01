@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     const userId = decoded.id;
 
-    const user = await User.findById(userId).select("username");
+    const user = await User.findById(userId).select("username streak");
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

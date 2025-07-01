@@ -29,6 +29,13 @@ const userSchema = new mongoose.Schema(
     otpExpiry: {
       type: Date,
     },
+    streak: {
+      type: Number,
+      default: 0,
+    },
+    lastMoodLoggedDate: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
