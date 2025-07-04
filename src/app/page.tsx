@@ -121,7 +121,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       <div className="relative bg-white min-h-[700px] overflow-hidden ">
         {/* Background Curve */}
         <div className="absolute inset-0">
@@ -179,7 +178,6 @@ export default function Home() {
           className="absolute top-[20vh] left-[60vw] w-[6vw] sm:w-[5vw] md:w-[4vw]"
         />
       </div>
-
       <div className="bg-gradient-to-b from-[#cfb5cc] to-white min-h-[500px] pt-24 px-4 text-center">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
@@ -193,7 +191,6 @@ export default function Home() {
 
         <FeatureShowcase />
       </div>
-
       <div className="bg-[#1a1a1a] text-gray-300 py-10 px-6 sm:px-12 lg:px-20 ">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 text-sm">
           <div>

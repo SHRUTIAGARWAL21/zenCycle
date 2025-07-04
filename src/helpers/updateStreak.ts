@@ -13,7 +13,7 @@ export const updateStreak = async (userId: string) => {
   if (lastLog) lastLog.setHours(0, 0, 0, 0);
   const isNewDay = !lastLog || lastLog.getTime() !== today.getTime();
 
-  if (!isNewDay) {
+  if (isNewDay) {
     const diffInDays = lastLog
       ? (today.getTime() - lastLog.getTime()) / (1000 * 60 * 60 * 24)
       : 1;

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { MoodClock } from "../components/moodClock/page";
+import Link from "next/link";
 
 const moodColors: Record<string, string> = {
   happy: "#FFD700",
@@ -160,6 +161,8 @@ export default function MoodPage() {
         if (moods.length === 0) setFirstEntry(true);
         setRawMoodData(moods);
 
+        console.log(moods);
+
         const moodTotals: Record<string, number> = {};
         const moodIntensities: Record<string, number[]> = {};
         const moodReasons: Record<string, string[]> = {};
@@ -240,7 +243,7 @@ export default function MoodPage() {
           <div className="flex-1">
             <h2 className="text-sm text-gray-500 mb-1">I'm feeling</h2>
             <h1 className="text-3xl font-bold text-[#4a3d7c]">
-              {moodMessageMap[dominantMood || "neutral"]}
+              {moodMessageMap[dominantMood] || "neutral"}
             </h1>
             <p className="text-sm italic mt-2 text-gray-500 max-w-[90%] leading-snug">
               "When your heart is full, share your light with the world."
@@ -266,9 +269,12 @@ export default function MoodPage() {
             ) : (
               <>
                 <h3 className="text-sm text-[#4a3d7c] mb-1">🎯 Mood Log</h3>
-                <p className="text-base font-semibold text-[#4a3d7c]">
+                <Link
+                  href="/logMood"
+                  className="text-base font-semibold text-[#4a3d7c]"
+                >
                   Enter your current mood
-                </p>
+                </Link>
               </>
             )}
           </div>
@@ -279,10 +285,15 @@ export default function MoodPage() {
                 🔥 Daily Streak
               </h3>
               <p className="text-2xl font-bold text-[#695aa4]">
-                {user?.streak ?? 0} days
+                {user?.streak ?? 0} days 🔥
               </p>
             </div>
-            <div className="text-3xl">🔥</div>
+            <Link
+              href="/profile"
+              className="w-10 h-10 rounded-full bg-[#695aa4] text-white flex items-center justify-center font-bold shadow onClick={onProfileClick}"
+            >
+              {user?.username?.charAt(0).toUpperCase()}
+            </Link>
           </div>
         </div>
       </div>
