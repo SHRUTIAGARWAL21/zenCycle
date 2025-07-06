@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema(
     lastMoodLoggedDate: {
       type: Date,
     },
+    totalActiveDays: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

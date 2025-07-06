@@ -130,6 +130,7 @@ export default function MoodPage() {
   const [user, setUser] = useState<{ username: string; streak: number } | null>(
     null
   );
+
   const [barChartData, setBarChartData] = useState<MoodEntry[]>([]);
   const [rawMoodData, setRawMoodData] = useState<any[]>([]);
   const [firstEntry, setFirstEntry] = useState(false);

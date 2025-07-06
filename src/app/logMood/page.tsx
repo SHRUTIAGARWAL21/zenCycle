@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const moods = [
-  { label: "Very Happy", emoji: "😊" },
-  { label: "Happy", emoji: "🙂" },
-  { label: "Neutral", emoji: "😐" },
+  { label: "Happy", emoji: "😀" },
+  { label: "Neutral", emoji: "😊" },
   { label: "Sad", emoji: "😢" },
-  { label: "Very Sad", emoji: "😭" },
+  { label: "Anxious", emoji: "😰" },
+  { label: "Depressed", emoji: "😟" },
+  { label: "Angry", emoji: "😡" },
 ];
 
 const reasons = [

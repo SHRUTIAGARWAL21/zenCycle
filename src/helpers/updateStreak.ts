@@ -6,6 +6,8 @@ export const updateStreak = async (userId: string) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  user.totalActiveDays = user.totalActiveDays + 1;
+
   let lastLog = user.lastMoodLoggedDate
     ? new Date(user.lastMoodLoggedDate)
     : null;
