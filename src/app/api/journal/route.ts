@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
     const journal = await Journal.create({
       userId,
       content,
-      imageUrls,
       pageNumber: nextPageNumber,
     });
 

@@ -32,11 +32,11 @@ export async function PUT(
   try {
     const userId = await getDataFromToken(request);
     const page = parseInt(params.pageNumber);
-    const { content, imageUrls } = await request.json();
+    const { content } = await request.json();
 
     const updated = await Journal.findOneAndUpdate(
       { userId, pageNumber: page },
-      { content, imageUrls },
+      { content },
       { new: true }
     );
 
@@ -45,29 +45,6 @@ export async function PUT(
     }
 
     return NextResponse.json(updated);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
-  }
-}
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { pageNumber: string } }
-) {
-  try {
-    const userId = await getDataFromToken(request);
-    const page = parseInt(params.pageNumber);
-
-    const deleted = await Journal.findOneAndDelete({
-      userId,
-      pageNumber: page,
-    });
-
-    if (!deleted) {
-      return NextResponse.json({ error: "Journal not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ message: "Deleted successfully" });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
