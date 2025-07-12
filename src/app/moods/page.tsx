@@ -1,7 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { MoodClock } from "../components/moodClock/page";
+
 import Link from "next/link";
+import { useAuth } from "../context/AuthContext";
 
 const moodColors: Record<string, string> = {
   happy: "#FFD700",
@@ -127,10 +129,6 @@ const MoodTooltip = ({
 };
 
 export default function MoodPage() {
-  const [user, setUser] = useState<{ username: string; streak: number } | null>(
-    null
-  );
-
   const [barChartData, setBarChartData] = useState<MoodEntry[]>([]);
   const [rawMoodData, setRawMoodData] = useState<any[]>([]);
   const [firstEntry, setFirstEntry] = useState(false);
@@ -139,13 +137,7 @@ export default function MoodPage() {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    fetch("/api/users/getUser", { credentials: "include" })
-      .then((res) => res.json())
-      .then(setUser)
-      .catch((err) => console.error("can't fetch user data", err));
-  }, []);
-
+  const { user, isLoading } = useAuth();
   useEffect(() => {
     const formatHour = (dateStr: string): string => {
       const date = new Date(dateStr);
@@ -161,8 +153,6 @@ export default function MoodPage() {
         const moods = data.moods || [];
         if (moods.length === 0) setFirstEntry(true);
         setRawMoodData(moods);
-
-        console.log(moods);
 
         const moodTotals: Record<string, number> = {};
         const moodIntensities: Record<string, number[]> = {};
@@ -225,8 +215,15 @@ export default function MoodPage() {
     day: "numeric",
   });
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
+
   return (
-    <main className="py-4 lg:px-32 md:px-24 sm:px-12 bg-gradient-to-b from-[#cfb5cc] to-white min-h-screen relative">
+    <main className="pt-16 lg:px-32 md:px-24 sm:px-12 bg-gradient-to-b from-[#cfb5cc] to-white min-h-screen relative">
       <div className="w-full flex flex-col items-center pt-8">
         <h1 className="text-4xl font-serif text-white">
           Hello <span className="text-[#5d3d5f]">{user?.username}!</span>
@@ -242,10 +239,24 @@ export default function MoodPage() {
       <div className="flex flex-col sm:flex-row gap-6 mt-10 px-4 sm:px-0">
         <div className="bg-white rounded-2xl shadow-lg p-6 sm:w-[60%] w-full flex flex-col sm:flex-row justify-between items-center">
           <div className="flex-1">
-            <h2 className="text-sm text-gray-500 mb-1">I'm feeling</h2>
-            <h1 className="text-3xl font-bold text-[#4a3d7c]">
-              {moodMessageMap[dominantMood] || "neutral"}
-            </h1>
+            {firstEntry ? (
+              <>
+                <h2 className="text-2xl font-bold text-[#4a3d7c]">
+                  {getGreeting()}
+                </h2>
+                <h1 className="text-2xl font-bold text-[#4a3d7c]">
+                  {user?.username}
+                </h1>
+              </>
+            ) : (
+              <>
+                <h2 className="text-sm text-gray-500 mb-1">I'm feeling</h2>
+                <h1 className="text-3xl font-bold text-[#4a3d7c]">
+                  {moodMessageMap[dominantMood] || "neutral"}
+                </h1>
+              </>
+            )}
+
             <p className="text-sm italic mt-2 text-gray-500 max-w-[90%] leading-snug">
               "When your heart is full, share your light with the world."
             </p>
@@ -257,27 +268,15 @@ export default function MoodPage() {
 
         <div className="flex flex-col gap-4 sm:w-[35%] w-full">
           <div className="bg-white rounded-2xl shadow-md p-5">
-            {firstEntry ? (
-              <>
-                <h3 className="text-sm text-gray-500 mb-1">🌈 Mood Target</h3>
-                <p className="text-base font-semibold text-[#4a3d7c]">
-                  How do you want to feel today?
-                </p>
-                <p className="text-sm text-gray-400 mt-2">
-                  Wishing you a happy day 🌟
-                </p>
-              </>
-            ) : (
-              <>
-                <h3 className="text-sm text-[#4a3d7c] mb-1">🎯 Mood Log</h3>
-                <Link
-                  href="/logMood"
-                  className="text-base font-semibold text-[#4a3d7c]"
-                >
-                  Enter your current mood
-                </Link>
-              </>
-            )}
+            <Link
+              href="/logMood"
+              className="text-base font-semibold text-[#4a3d7c]"
+            >
+              Enter your current mood
+            </Link>
+            <p className="text-sm text-gray-400 mt-2">
+              Wishing you a happy day 🌟
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-md p-5 flex items-center justify-between">
@@ -302,14 +301,35 @@ export default function MoodPage() {
       <div className="mt-10 flex flex-col lg:flex-row gap-8 items-start justify-center px-4">
         <div className="w-full lg:w-1/2">
           <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-center lg:text-left">
-              Today's Mood Overview
-            </h2>
-            <CustomMoodBar
-              data={barChartData}
-              onHover={handleBarHover}
-              onLeave={handleBarLeave}
-            />
+            {firstEntry ? (
+              // First Entry State
+              <div className="text-center py-4">
+                <h2 className="text-xl font-semibold mb-2 text-purple-800">
+                  Track Your Today's Mood
+                </h2>
+                <p className="text-purple-600 mb-6">
+                  Start by entering your mood
+                </p>
+                <Link
+                  href="/logMood"
+                  className="bg-[#903895] text-white px-6 py-2 rounded-full font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  Log First Mood
+                </Link>
+              </div>
+            ) : (
+              // Regular State - Show mood data
+              <>
+                <h2 className="text-xl font-semibold mb-4 text-center lg:text-left">
+                  Today's Mood Overview
+                </h2>
+                <CustomMoodBar
+                  data={barChartData}
+                  onHover={handleBarHover}
+                  onLeave={handleBarLeave}
+                />
+              </>
+            )}
           </div>
         </div>
 

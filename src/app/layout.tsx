@@ -1,9 +1,8 @@
-import "./globals.css";
+"use client";
+import NavbarWrapper from "./components/navbar/NavbarWrapper";
+import { AuthProvider } from "./context/AuthContext";
 
-export const metadata = {
-  title: "My Landing Page",
-  description: "This is my custom landing page in Next.js",
-};
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -12,7 +11,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          <NavbarWrapper />
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

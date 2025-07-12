@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     });
 
     await newMood.save();
-    await updateStreak(userId);
+    await updateStreak(userId, true);
     return NextResponse.json({
       message: "Mood logged successfully!",
       mood: newMood,

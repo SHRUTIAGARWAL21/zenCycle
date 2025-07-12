@@ -2,6 +2,7 @@ import { connect } from "@/dbconfig/dbconfig";
 import User from "@/models/userModel";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import { updateStreak } from "@/helpers/updateStreak";
 
 connect();
 
@@ -19,7 +20,10 @@ export async function GET(request: NextRequest) {
 
     const userId = decoded.id;
 
-    const user = await User.findById(userId).select("username streak");
+    const user = await User.findById(userId).select(
+      "username streak totalActiveDays"
+    );
+    await updateStreak(userId);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

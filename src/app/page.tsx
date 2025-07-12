@@ -1,7 +1,7 @@
 "use client";
 import { LuChevronsDown } from "react-icons/lu";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 function Feature({ icon, label, isMobile = false }) {
   return (
@@ -83,14 +83,40 @@ function FeatureShowcase() {
 
 export default function Home() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/users/me", { credentials: "include" })
+      .then((res) => {
+        if (!res.ok) {
+          setIsLoggedIn(false);
+          return;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data?.user) {
+          setIsLoggedIn(true);
+        }
+      })
+      .catch((err) => {
+        setIsLoggedIn(false);
+      });
+  }, []);
 
   const handleScroll = () => {
     window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
   };
 
   function handleButtonClick() {
-    router.push("/signup");
+    if (isLoggedIn) {
+      router.push("/moods");
+      console.log("clicked");
+    } else {
+      router.push("/signup");
+    }
   }
+
   return (
     <main>
       <div className="bg-purple-200 overflow-hidden pt-12 pb-12">

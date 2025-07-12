@@ -1,28 +1,37 @@
 import User from "@/models/userModel";
 
-export const updateStreak = async (userId: string) => {
+export const updateStreak = async (
+  userId: string,
+  moodLog: boolean = false
+) => {
   const user = await User.findById(userId);
   if (!user) return;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
-  user.totalActiveDays = user.totalActiveDays + 1;
+  if (moodLog) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  let lastLog = user.lastMoodLoggedDate
-    ? new Date(user.lastMoodLoggedDate)
-    : null;
+    user.totalActiveDays = user.totalActiveDays + 1;
 
-  if (lastLog) lastLog.setHours(0, 0, 0, 0);
-  const isNewDay = !lastLog || lastLog.getTime() !== today.getTime();
+    let lastLog = user.lastMoodLoggedDate
+      ? new Date(user.lastMoodLoggedDate)
+      : null;
 
-  if (isNewDay) {
-    const diffInDays = lastLog
-      ? (today.getTime() - lastLog.getTime()) / (1000 * 60 * 60 * 24)
-      : 1;
+    if (lastLog) lastLog.setHours(0, 0, 0, 0);
 
-    user.streak = diffInDays === 1 ? user.streak + 1 : 1;
-    user.lastMoodLoggedDate = new Date();
-    await user.save();
+    const isNewDay = !lastLog || lastLog.getTime() !== today.getTime();
+
+    if (isNewDay) {
+      const diffInDays = lastLog
+        ? (today.getTime() - lastLog.getTime()) / (1000 * 60 * 60 * 24)
+        : 1;
+
+      user.streak = diffInDays === 1 ? user.streak + 1 : 1;
+
+      user.lastMoodLoggedDate = new Date();
+
+      await user.save();
+    }
   }
 
   return user;
