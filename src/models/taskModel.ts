@@ -14,9 +14,12 @@ const taskSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  timer: {
+  timeExpected: {
     type: Number,
     required: true,
+  },
+  timeTaken: {
+    type: Number,
   },
   status: {
     type: Boolean,
