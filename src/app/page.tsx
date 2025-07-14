@@ -2,6 +2,7 @@
 import { LuChevronsDown } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
+import { useAuth } from "./context/AuthContext";
 
 function Feature({ icon, label, isMobile = false }) {
   return (
@@ -83,39 +84,30 @@ function FeatureShowcase() {
 
 export default function Home() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    fetch("/api/users/me", { credentials: "include" })
-      .then((res) => {
-        if (!res.ok) {
-          setIsLoggedIn(false);
-          return;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.user) {
-          setIsLoggedIn(true);
-        }
-      })
-      .catch((err) => {
-        setIsLoggedIn(false);
-      });
-  }, []);
+  const { user, isLoading } = useAuth();
 
   const handleScroll = () => {
     window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
   };
 
-  function handleButtonClick() {
-    if (isLoggedIn) {
+  useEffect(() => {
+    if (!isLoading && user) {
+      import("@/utils/requestPermission").then(
+        ({ requestNotificationPermission }) => {
+          requestNotificationPermission();
+        }
+      );
+    }
+  }, [isLoading, user]);
+
+  const handleButtonClick = () => {
+    console.log(user);
+    if (user) {
       router.push("/moods");
-      console.log("clicked");
     } else {
       router.push("/signup");
     }
-  }
+  };
 
   return (
     <main>

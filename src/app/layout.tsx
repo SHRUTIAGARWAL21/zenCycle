@@ -1,5 +1,5 @@
 "use client";
-import NavbarWrapper from "./components/navbar/NavbarWrapper";
+import NavbarWrapper from "../components/navbar/NavbarWrapper";
 import { AuthProvider } from "./context/AuthContext";
 
 import "./globals.css";

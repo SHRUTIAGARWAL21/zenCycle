@@ -26,12 +26,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUser = () => {
     setIsLoading(true);
+
     fetch("/api/users/getUser", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        setUser(data ?? null);
+      .then(async (res) => {
+        if (!res.ok) {
+          const error = await res.json();
+
+          // ✅ Handle token expiration
+          if (
+            error.error === "TokenExpired" ||
+            error.error === "Unauthorized"
+          ) {
+            console.log("Session expired. Logging out...");
+            logout();
+            setUser(null);
+            return null;
+          }
+
+          // Other error
+          console.error("Auth error:", error);
+          setUser(null);
+          return null;
+        }
+
+        return res.json();
       })
-      .catch(() => setUser(null))
+      .then((data) => {
+        if (data) setUser(data);
+      })
+      .catch((err) => {
+        console.error("Unexpected fetch error:", err);
+        setUser(null);
+      })
       .finally(() => setIsLoading(false));
   };
 

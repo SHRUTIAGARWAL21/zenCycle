@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import MoodHeatmap from "../components/MoodHeatmap/page";
-import WeeklySummary from "../components/WeeklySummary.tsx/page";
+import MoodHeatmap from "../../components/MoodHeatmap/page";
+import WeeklySummary from "../../components/WeeklySummary.tsx/page";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 

@@ -23,11 +23,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    otp: {
+    fcmToken: {
       type: String,
-    },
-    otpExpiry: {
-      type: Date,
+      default: null,
     },
     streak: {
       type: Number,

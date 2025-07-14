@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { MoodClock } from "../components/moodClock/page";
+import { MoodClock } from "../../components/moodClock/page";
 
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";

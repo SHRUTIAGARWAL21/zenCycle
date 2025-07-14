@@ -1,5 +1,5 @@
 "use client";
-import JournalEditor from "../components/JournalEditor/page";
+import JournalEditor from "../../components/JournalEditor/page";
 
 export default function JournalPage() {
   return (
