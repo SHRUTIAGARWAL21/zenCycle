@@ -8,7 +8,7 @@ connect();
 export async function PUT(request: NextRequest) {
   try {
     const userId = getDataFromToken(request);
-    const { taskId, totalTimeTaken } = await request.json();
+    const { taskId, progress, totalTimeTaken } = await request.json();
 
     const task = await Task.findOne({ _id: taskId, userId });
 
@@ -16,7 +16,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Task not found", status: 404 });
     }
 
-    task.status = true;
+    task.progress = progress;
     task.timeTaken = totalTimeTaken;
 
     const delay = totalTimeTaken - task.timeExpected;

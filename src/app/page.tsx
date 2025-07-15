@@ -97,6 +97,15 @@ export default function Home() {
           requestNotificationPermission();
         }
       );
+
+      fetch("/api/cron/keep-alive")
+        .then((res) => {
+          if (!res.ok) throw new Error("Keep-alive failed");
+          console.log("✅ Keep-alive pinged");
+        })
+        .catch((err) => {
+          console.error("Error triggering keep-alive:", err);
+        });
     }
   }, [isLoading, user]);
 

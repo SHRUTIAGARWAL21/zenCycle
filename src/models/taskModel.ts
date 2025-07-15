@@ -14,12 +14,13 @@ const taskSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  timeExpected: {
+  expectedTime: {
     type: Number,
     required: true,
   },
   timeTaken: {
-    type: Number,
+    type: Number, // in minutes
+    default: 0,
   },
   deadline: {
     type: Date,
@@ -27,15 +28,21 @@ const taskSchema = new mongoose.Schema({
   },
   completedAt: {
     type: Date,
-    required: true,
   },
-  status: {
-    type: Boolean,
-    default: false,
+  progress: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100,
   },
   reason: {
     type: String,
     default: "",
+  },
+  priority: {
+    type: String,
+    enum: ["low", "medium", "high"],
+    default: "medium",
   },
   createdAt: {
     type: Date,

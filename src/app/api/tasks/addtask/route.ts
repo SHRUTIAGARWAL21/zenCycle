@@ -7,16 +7,17 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const userId = getDataFromToken(request);
-    const { title, description, timeExpected, status, priority } =
+    const { title, description, expectedTime, progress, priority, deadline } =
       await request.json();
 
     const newTask = new Task({
       userId,
       title,
       description,
-      timeExpected,
-      status,
+      expectedTime,
+      progress,
       priority,
+      deadline,
     });
 
     await newTask.save();
