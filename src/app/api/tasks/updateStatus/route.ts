@@ -19,7 +19,7 @@ export async function PUT(request: NextRequest) {
     task.progress = progress;
     task.timeTaken = totalTimeTaken;
 
-    const delay = totalTimeTaken - task.timeExpected;
+    const delay = totalTimeTaken - task.expectedTime;
 
     await task.save();
 

@@ -18,7 +18,7 @@ export default function AddTaskModal({
     description: "",
     deadline: "",
     expectedTime: "",
-    priority: "medium",
+    priority: "",
   });
 
   const handleInputChange = (
@@ -119,7 +119,7 @@ export default function AddTaskModal({
               Priority
             </label>
             <div className="flex gap-2">
-              {["low", "medium", "high"].map((priority) => (
+              {["low", "mid", "high"].map((priority) => (
                 <button
                   key={priority}
                   type="button"
@@ -128,7 +128,7 @@ export default function AddTaskModal({
                     formData.priority === priority
                       ? priority === "low"
                         ? "bg-green-100 text-green-700 border-green-300"
-                        : priority === "medium"
+                        : priority === "mid"
                         ? "bg-yellow-100 text-yellow-700 border-yellow-300"
                         : "bg-red-100 text-red-700 border-red-300"
                       : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"

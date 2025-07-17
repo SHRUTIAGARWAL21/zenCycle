@@ -14,7 +14,7 @@ export type Task = {
   expectedTime: number;
   deadline: string;
   progress: number;
-  priority: "low" | "medium" | "high";
+  priority: "low" | "mid" | "high";
 };
 
 export default function Taskpage() {
@@ -27,7 +27,7 @@ export default function Taskpage() {
     description: "",
     deadline: "",
     expectedTime: "",
-    priority: "medium",
+    priority: "mid",
   });
 
   const now = new Date();
@@ -37,39 +37,30 @@ export default function Taskpage() {
     month: "long",
     day: "numeric",
   });
+  const fetchTasks = async () => {
+    if (isLoading || !user) {
+      if (!isLoading && !user) setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await axios.get("/api/tasks/getTask");
+      if (res.data && res.data.tasks) {
+        setTasks(res.data.tasks);
+      } else if (Array.isArray(res.data)) {
+        setTasks(res.data);
+      } else {
+        setTasks([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch tasks", err);
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      // Don't fetch if user is not available or still loading
-      if (isLoading || !user) {
-        if (!isLoading && !user) {
-          setLoading(false);
-        }
-        return;
-      }
-
-      try {
-        console.log("Fetching tasks for user:", user);
-        const res = await axios.get("/api/tasks/getTask");
-        console.log("API Response:", res.data);
-
-        // Handle different response structures
-        if (res.data && res.data.tasks) {
-          setTasks(res.data.tasks);
-        } else if (Array.isArray(res.data)) {
-          setTasks(res.data);
-        } else {
-          console.warn("Unexpected response format:", res.data);
-          setTasks([]);
-        }
-      } catch (err) {
-        console.error("Failed to fetch tasks", err);
-        setTasks([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchTasks();
   }, [user, isLoading]);
 
@@ -89,6 +80,18 @@ export default function Taskpage() {
       console.error("Error fetching tasks after adding:", err);
     } finally {
       setShowModal(false);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await axios.delete(`/api/tasks/deleteTask`, {
+        data: { taskId },
+      });
+
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } catch (error) {
+      console.error("Failed to delete task", error);
     }
   };
 
@@ -118,7 +121,7 @@ export default function Taskpage() {
           description: "",
           deadline: "",
           expectedTime: "",
-          priority: "medium",
+          priority: "mid",
         });
         return;
       }
@@ -129,7 +132,7 @@ export default function Taskpage() {
         description: "",
         deadline: "",
         expectedTime: "",
-        priority: "medium",
+        priority: "mid",
       });
       setShowModal(false);
     } catch (err) {
@@ -160,15 +163,26 @@ export default function Taskpage() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-b from-[#cfb5cc] to-white overflow-hidden">
+    <div className="h-screen bg-gradient-to-b from-[#cfb5cc] to-white overflow-y-auto">
       {/* Header */}
       <div className="bg-white/70 backdrop-blur-sm shadow-sm border-b border-gray-200 px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-serif text-[#432d44]">
-              Hello <span className="text-[#5d3d5f]">{user?.username}</span>
-            </h1>
-            <p className="text-sm text-gray-600">{formatted}</p>
+        {/* Mobile: Header below navbar (default behavior) */}
+        <div className="block md:hidden text-center pt-16">
+          <h1 className="text-3xl font-serif text-[#432d44]">
+            Hello <span className="text-[#5d3d5f]">{user?.username}</span>
+          </h1>
+          <p className="text-sm text-gray-600">{formatted}</p>
+        </div>
+
+        {/* Desktop: Header on top left */}
+        <div className="hidden md:block">
+          <div className="flex items-center justify-start">
+            <div className="text-left">
+              <h1 className="text-3xl font-serif text-[#432d44]">
+                Hello <span className="text-[#5d3d5f]">{user?.username}</span>
+              </h1>
+              <p className="text-sm text-gray-600">{formatted}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -204,17 +218,14 @@ export default function Taskpage() {
         </div>
       )}
 
-      {/* Tasks dashboard */}
-      {!loading && tasks.length > 0 && (
-        <div style={{ height: "calc(100vh - 100px)" }}>
-          <TaskDashboard
-            user={user}
-            tasks={tasks}
-            loading={loading}
-            onAddTask={() => setShowModal(true)}
-          />
-        </div>
-      )}
+      <TaskDashboard
+        user={user}
+        tasks={tasks}
+        loading={loading}
+        onAddTask={() => setShowModal(true)}
+        onDeleteTask={handleDeleteTask}
+        onRefreshTasks={fetchTasks} // ✅ Add this
+      />
 
       {/* Add task modal */}
       {showModal && (
