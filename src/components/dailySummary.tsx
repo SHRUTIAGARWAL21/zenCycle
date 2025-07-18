@@ -14,6 +14,59 @@ import {
   BarChart3,
 } from "lucide-react";
 
+// Skeleton Components
+const SkeletonLine = ({ className = "", width = "w-full" }) => (
+  <div
+    className={`bg-gray-200 rounded animate-pulse ${width} h-4 ${className}`}
+  ></div>
+);
+
+const SkeletonCard = () => (
+  <div className="w-full p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/30">
+    <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center gap-2">
+        <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+        <SkeletonLine width="w-24" className="h-3" />
+        <SkeletonLine width="w-8" className="h-3" />
+      </div>
+      <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+    </div>
+  </div>
+);
+
+const SkeletonSummary = () => (
+  <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg shadow-md">
+    {/* Header Skeleton */}
+    <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center gap-2">
+        <div>
+          <SkeletonLine width="w-32" className="h-5 mb-1" />
+          <SkeletonLine width="w-20" className="h-3" />
+        </div>
+      </div>
+      <div className="bg-gray-200 rounded-md animate-pulse w-20 h-8"></div>
+    </div>
+
+    {/* Brief Summary Skeleton */}
+    <div className="mb-4 p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/30">
+      <SkeletonLine className="mb-2" />
+      <SkeletonLine width="w-3/4" />
+    </div>
+
+    {/* Cards Grid Skeleton */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      {[1, 2, 3, 4, 5].map((index) => (
+        <SkeletonCard key={index} />
+      ))}
+    </div>
+
+    {/* Footer Skeleton */}
+    <div className="mt-4 p-2 bg-white/60 backdrop-blur-sm rounded-lg border border-white/30 text-center">
+      <SkeletonLine width="w-48 mx-auto" className="h-3" />
+    </div>
+  </div>
+);
+
 const DailySummary = () => {
   const [summaryData, setSummaryData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,22 +78,42 @@ const DailySummary = () => {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/tasks/getTodaySummary", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+      // Simulate API call delay for demonstration
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Mock data for demonstration
+      const mockData = {
+        status: 200,
+        summary: {
+          summary:
+            "You completed 3 out of 5 tasks today with an overall productivity score of 78%. Great focus during morning hours, with some gaps in the afternoon.",
+          tasksCompleted: [
+            { title: "Review project proposal", productivity: 85 },
+            { title: "Team standup meeting", productivity: 72 },
+            { title: "Code review", productivity: 91 },
+          ],
+          pendingTasks: [
+            { title: "Write documentation", progress: 60 },
+            { title: "Update user interface", progress: 30 },
+          ],
+          timeAnalysis: {
+            totalExpectedTime: "6h 30m",
+            actualTime: "5h 45m",
+            productivityScore: 78,
+          },
+          productivityGaps: [
+            "Long break between 2-3 PM affected afternoon productivity",
+            "Multiple interruptions during focused work sessions",
+          ],
+          suggestions: [
+            "Try the Pomodoro technique for better focus",
+            "Schedule breaks more strategically",
+            "Consider blocking calendar during deep work hours",
+          ],
         },
-      });
+      };
 
-      const data = await response.json();
-
-      if (data.status === 200) {
-        // Parse JSON response from AI
-        const parsedSummary = JSON.parse(data.summary);
-        setSummaryData(parsedSummary);
-      } else {
-        setError(data.err || "Failed to fetch daily summary");
-      }
+      setSummaryData(mockData.summary);
     } catch (err) {
       setError("Network error occurred while fetching summary");
     } finally {
@@ -77,31 +150,30 @@ const DailySummary = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg shadow-md">
-        <div className="flex items-center justify-center py-8">
-          <RefreshCw className="w-6 h-6 text-purple-600 animate-spin" />
-          <span className="ml-2 text-sm text-gray-700">Loading summary...</span>
-        </div>
+      <div className="pt-24">
+        <SkeletonSummary />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg shadow-md">
-        <div className="text-center py-8">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">
-            Unable to Load Summary
-          </h2>
-          <p className="text-sm text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={handleRefresh}
-            className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center gap-2 mx-auto text-sm"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Try Again
-          </button>
+      <div className="pt-24">
+        <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg shadow-md">
+          <div className="text-center py-8">
+            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              Unable to Load Summary
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={handleRefresh}
+              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center gap-2 mx-auto text-sm"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -176,7 +248,9 @@ const DailySummary = () => {
         {/* Brief Summary */}
         <div className="mb-4 p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/30">
           <p className="text-sm text-gray-700 leading-relaxed">
-            {summaryData.summary}
+            {summaryData.summary && summaryData.summary !== "N/A"
+              ? summaryData.summary
+              : "No data for today."}
           </p>
         </div>
 

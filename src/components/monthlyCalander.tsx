@@ -1,247 +1,250 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-} from "lucide-react";
+import { Clock, Target, TrendingUp } from "lucide-react";
 
 const ProductivityCalendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [productivityData, setProductivityData] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [productivityData, setProductivityData] = useState([]);
+  const [hoveredDay, setHoveredDay] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
-  // Mock data - replace with your API call
+  // Mock data for demonstration
   useEffect(() => {
-    const fetchProductivityData = async () => {
-      try {
-        const response = await fetch("/api/tasks/getMonthlyProductivity");
-        const data = await response.json();
-        setProductivityData(data.dailyProductivity);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching productivity data:", error);
-        setLoading(false);
-      }
-    };
+    fetch("/api/productivity/monthly")
+      .then((res) => res.json())
+      .then((data) => {
+        setProductivityData(data.data);
+        setCurrentMonth(data.month);
+        setCurrentYear(data.year);
+      });
+  }, []);
 
-    fetchProductivityData();
-  }, [currentDate]);
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (month, year) => {
+    return new Date(year, month - 1, 1).getDay();
+  };
 
   const getProductivityColor = (score) => {
     if (score >= 90)
-      return "bg-gradient-to-br from-purple-500 to-violet-600 text-white"; // Excellent
+      return "bg-gradient-to-br from-purple-400 to-purple-500 text-white shadow-lg";
     if (score >= 80)
-      return "bg-gradient-to-br from-purple-400 to-violet-500 text-white"; // Very Good
+      return "bg-gradient-to-br from-purple-300 to-purple-400 text-white shadow-md";
     if (score >= 70)
-      return "bg-gradient-to-br from-purple-300 to-violet-400 text-purple-900"; // Good
+      return "bg-gradient-to-br from-blue-300 to-blue-400 text-white shadow-md";
     if (score >= 60)
-      return "bg-gradient-to-br from-purple-200 to-violet-300 text-purple-800"; // Average
+      return "bg-gradient-to-br from-yellow-200 to-yellow-300 text-yellow-800 shadow-sm";
     if (score >= 50)
-      return "bg-gradient-to-br from-orange-200 to-yellow-300 text-orange-800"; // Below Average
-    return "bg-gradient-to-br from-red-200 to-red-300 text-red-800"; // Poor
+      return "bg-gradient-to-br from-orange-200 to-orange-300 text-orange-800 shadow-sm";
+    return "bg-gradient-to-br from-red-200 to-red-300 text-red-800 shadow-sm";
   };
 
-  const getProductivityIcon = (score) => {
-    if (score >= 70) return <TrendingUp className="w-3 h-3" />;
-    if (score >= 50) return <Minus className="w-3 h-3" />;
-    return <TrendingDown className="w-3 h-3" />;
+  const calculateEfficiency = (expectedTime, actualTime) => {
+    // Better efficiency calculation: lower actual time = higher efficiency
+    if (actualTime <= expectedTime) {
+      return 100; // Perfect or better than expected
+    }
+    return Math.max(0, Math.round((expectedTime / actualTime) * 100));
   };
 
-  const getProductivityLabel = (score) => {
-    if (score >= 90) return "Excellent";
-    if (score >= 80) return "Very Good";
-    if (score >= 70) return "Good";
-    if (score >= 60) return "Average";
-    if (score >= 50) return "Below Avg";
-    return "Poor";
+  const handleMouseEnter = (dayData, event) => {
+    if (dayData) {
+      setHoveredDay(dayData);
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    }
   };
 
-  const formatDate = (date) => {
-    return date.toISOString().split("T")[0];
+  const handleMouseLeave = () => {
+    setHoveredDay(null);
   };
 
-  const getDaysInMonth = (date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    return { daysInMonth, startingDayOfWeek };
+  const handleMouseMove = (event) => {
+    if (hoveredDay) {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    }
   };
 
-  const navigateMonth = (direction) => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(currentDate.getMonth() + direction);
-    setCurrentDate(newDate);
-  };
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-  const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentDate);
-  const monthName = currentDate.toLocaleString("default", { month: "long" });
-  const year = currentDate.getFullYear();
+  const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+  const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
+  const today = new Date().getDate();
+  const isCurrentMonth =
+    new Date().getMonth() + 1 === currentMonth &&
+    new Date().getFullYear() === currentYear;
 
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const emptyDays = Array(startingDayOfWeek).fill(null);
-  const monthDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  // Create calendar grid
+  const calendarDays = [];
 
-  if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-purple-50 to-violet-100 rounded-2xl shadow-2xl">
-        <div className="flex items-center justify-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
-        </div>
-      </div>
-    );
+  // Empty cells for days before the first day of month
+  for (let i = 0; i < firstDay; i++) {
+    calendarDays.push(null);
+  }
+
+  // Days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayData = productivityData.find((item) => item.day === day);
+    calendarDays.push({
+      day,
+      data: dayData,
+      isToday: isCurrentMonth && day === today,
+    });
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-purple-50 to-violet-100 rounded-2xl shadow-2xl">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center space-x-3">
-          <Calendar className="w-8 h-8 text-purple-600" />
-          <h1 className="text-3xl font-bold text-purple-800">
+    <div className="max-w-4xl mx-auto p-6  bg-gradient-to-br from-purple-50 to-pink-50  rounded-lg shadow-md min-h-screen">
+      <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-purple-100">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-purple-800 bg-clip-text text-transparent mb-2">
             Productivity Calendar
           </h1>
+          <p className="text-2xl font-semibold text-purple-800">
+            {monthNames[currentMonth - 1]} {currentYear}
+          </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => navigateMonth(-1)}
-            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow duration-200 hover:bg-purple-50"
-          >
-            <ChevronLeft className="w-5 h-5 text-purple-600" />
-          </button>
-          <h2 className="text-xl font-semibold text-purple-700 min-w-[180px] text-center">
-            {monthName} {year}
-          </h2>
-          <button
-            onClick={() => navigateMonth(1)}
-            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow duration-200 hover:bg-purple-50"
-          >
-            <ChevronRight className="w-5 h-5 text-purple-600" />
-          </button>
-        </div>
-      </div>
 
-      {/* Calendar Grid */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        {/* Day Headers */}
-        <div className="grid grid-cols-7 bg-gradient-to-r from-purple-600 to-violet-600">
-          {days.map((day) => (
-            <div key={day} className="p-4 text-center font-semibold text-white">
+        {/* Day labels */}
+        <div className="grid grid-cols-7 gap-2 mb-4">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+            <div
+              key={day}
+              className="text-center font-semibold text-purple-700 py-3"
+            >
               {day}
             </div>
           ))}
         </div>
 
-        {/* Calendar Days */}
-        <div className="grid grid-cols-7 gap-1 p-1 bg-gray-50">
-          {/* Empty days for month start */}
-          {emptyDays.map((_, index) => (
-            <div
-              key={`empty-${index}`}
-              className="h-24 bg-gray-100 rounded-lg"
-            ></div>
-          ))}
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-2 mb-6">
+          {calendarDays.map((dayInfo, index) => {
+            if (!dayInfo) {
+              return <div key={index} className="aspect-square"></div>;
+            }
 
-          {/* Month days */}
-          {monthDays.map((day) => {
-            const dateKey = formatDate(
-              new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-            );
-            const dayData = productivityData[dateKey];
-            const hasNoTasks = dayData?.message === "No tasks added";
-            const score = dayData?.productivityScore;
+            const { day, data, isToday } = dayInfo;
+            const hasData = !!data;
 
             return (
               <div
                 key={day}
-                className={`h-24 rounded-lg border-2 transition-all duration-200 hover:scale-105 ${
-                  hasNoTasks || !dayData
-                    ? "bg-gray-200 border-gray-300"
-                    : `${getProductivityColor(
-                        score
-                      )} border-purple-200 shadow-md hover:shadow-lg`
-                }`}
+                onMouseEnter={(e) => hasData && handleMouseEnter(data, e)}
+                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleMouseMove}
+                className={`
+                  aspect-square rounded-xl flex flex-col items-center justify-center relative
+                  transition-all duration-300 transform hover:scale-105 border-2
+                  ${
+                    hasData
+                      ? `${getProductivityColor(
+                          data.score
+                        )} cursor-pointer hover:shadow-lg border-transparent`
+                      : "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200"
+                  }
+                  ${isToday ? "ring-4 ring-purple-400 ring-opacity-50" : ""}
+                `}
               >
-                <div className="h-full flex flex-col justify-between p-2">
-                  <div className="flex justify-between items-start">
-                    <span
-                      className={`text-sm font-semibold ${
-                        hasNoTasks || !dayData ? "text-gray-500" : ""
-                      }`}
-                    >
-                      {day}
-                    </span>
-                    {score && (
-                      <div className="flex items-center space-x-1">
-                        {getProductivityIcon(score)}
-                      </div>
-                    )}
+                <span
+                  className={`text-lg font-bold ${
+                    isToday ? "text-purple-900" : ""
+                  }`}
+                >
+                  {day}
+                </span>
+                {hasData && (
+                  <div className="text-xs mt-1 text-center opacity-90">
+                    <div className="font-semibold">{data.score}%</div>
                   </div>
-
-                  {hasNoTasks || !dayData ? (
-                    <div className="text-xs text-gray-500 text-center">
-                      No tasks
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <div className="text-lg font-bold mb-1">{score}%</div>
-                      <div className="text-xs opacity-80">
-                        {getProductivityLabel(score)}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                )}
+                {isToday && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full"></div>
+                )}
               </div>
             );
           })}
         </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap justify-center gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-gradient-to-br from-purple-400 to-purple-500"></div>
+            <span className="text-purple-700">90%+ Excellent</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-gradient-to-br from-purple-300 to-purple-400"></div>
+            <span className="text-purple-700">80%+ Great</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-gradient-to-br from-yellow-200 to-yellow-300"></div>
+            <span className="text-purple-700">60%+ Good</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-gradient-to-br from-red-200 to-red-300"></div>
+            <span className="text-purple-700">&lt;60% Needs Work</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-gray-100 border border-gray-300"></div>
+            <span className="text-purple-700">No Data</span>
+          </div>
+        </div>
       </div>
 
-      {/* Legend */}
-      <div className="mt-8 bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-lg font-semibold text-purple-800 mb-4">
-          Productivity Scale
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-br from-purple-500 to-violet-600"></div>
-            <span className="text-sm">90-100% Excellent</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-br from-purple-400 to-violet-500"></div>
-            <span className="text-sm">80-89% Very Good</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-br from-purple-300 to-violet-400"></div>
-            <span className="text-sm">70-79% Good</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-br from-purple-200 to-violet-300"></div>
-            <span className="text-sm">60-69% Average</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-br from-orange-200 to-yellow-300"></div>
-            <span className="text-sm">50-59% Below Avg</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-br from-red-200 to-red-300"></div>
-            <span className="text-sm">0-49% Poor</span>
+      {/* Small Hover Tooltip */}
+      {hoveredDay && (
+        <div
+          className="fixed z-50 pointer-events-none"
+          style={{
+            left: mousePosition.x + 10,
+            top: mousePosition.y - 10,
+            transform: "translateY(-100%)",
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-xl p-3 border border-purple-200 max-w-xs">
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-3 h-3 text-purple-600" />
+                <span className="text-purple-600">Score: </span>
+                <span className="font-semibold text-purple-800">
+                  {hoveredDay.score}%
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Target className="w-3 h-3 text-blue-600" />
+                <span className="text-blue-600">Expected: </span>
+                <span className="font-semibold text-blue-800">
+                  {hoveredDay.expectedTime}h
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Clock className="w-3 h-3 text-green-600" />
+                <span className="text-green-600">Actual: </span>
+                <span className="font-semibold text-green-800">
+                  {hoveredDay.actualTime}h
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded bg-gray-200"></div>
-            <span className="text-sm text-gray-600">No tasks added</span>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
