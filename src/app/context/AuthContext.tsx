@@ -4,8 +4,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
   username: string;
-  streak: number;
-  totalActiveDays: number;
+  Taskstreak: number;
+  Moodstreak: number;
+  totalMoodActiveDays: number;
+  totalTaskActiveDays: number;
 };
 
 const AuthContext = createContext<{

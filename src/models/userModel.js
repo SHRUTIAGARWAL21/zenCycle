@@ -27,14 +27,23 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    streak: {
+    Moodstreak: {
       type: Number,
       default: 0,
     },
     lastMoodLoggedDate: {
       type: Date,
     },
-    totalActiveDays: { type: Number, default: 0 },
+    Taskstreak: {
+      type: Number,
+      default: 0,
+    },
+    lastTaskLoggedDate: {
+      type: Date,
+    },
+    totalTaskActiveDays: { type: Number, default: 0 },
+
+    totalMoodActiveDays: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

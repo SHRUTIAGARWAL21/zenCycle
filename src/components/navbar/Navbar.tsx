@@ -46,10 +46,10 @@ export default function Navbar() {
         Home
       </a>
       <a
-        href="/logMood"
+        href="/tasks"
         className="hover:text-purple-900 transition-colors duration-200 hover:scale-105 transform"
       >
-        Logs
+        Tasks
       </a>
       <a
         href="/moods"
@@ -64,27 +64,37 @@ export default function Navbar() {
           onClick={() => setShowDropdown((prev) => !prev)}
           className="flex items-center gap-2 hover:text-purple-900 transition-all duration-200 hover:scale-105 transform px-3 py-1.5 rounded-full hover:bg-white/30"
         >
-          Profile
+          Summary
         </button>
 
         {showDropdown && (
-          <div className="absolute right-0 mt-3 w-48 bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl overflow-hidden z-50 border border-white/20 animate-in slide-in-from-top-2 duration-200">
+          <div className="absolute mt-3 w-48 bg-white/80 backdrop-blur-xl shadow-xl rounded-2xl overflow-hidden z-50 border border-white/20 animate-in slide-in-from-top-2 duration-200">
             <button
               onClick={() => {
-                router.push("/profile");
+                router.push("/taskSummary");
                 setShowDropdown(false);
               }}
-              className="w-full text-left px-4 py-3 text-sm hover:bg-purple-50 text-purple-700 font-medium transition-colors duration-200 flex items-center gap-2"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-purple-50 text-purple-700 font-medium transition-colors duration-200 flex items-center gap-2"
             >
               <FaUser className="text-xs" />
-              View Profile
+              Task Summary
+            </button>
+            <button
+              onClick={() => {
+                router.push("/moodSummary");
+                setShowDropdown(false);
+              }}
+              className="w-full text-left px-3 py-2 text-sm hover:bg-purple-50 text-purple-700 font-medium transition-colors duration-200 flex items-center gap-2"
+            >
+              <FaUser className="text-xs" />
+              Mood Summary
             </button>
             <button
               onClick={() => {
                 handleLogout();
                 setShowDropdown(false);
               }}
-              className="w-full text-left px-4 py-3 text-sm hover:bg-red-50 text-red-600 font-medium transition-colors duration-200 border-t border-purple-100"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-red-50 text-red-600 font-medium transition-colors duration-200 border-t border-purple-100"
             >
               Sign Out
             </button>

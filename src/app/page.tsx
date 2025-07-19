@@ -90,24 +90,24 @@ export default function Home() {
     window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
   };
 
-  useEffect(() => {
-    if (!isLoading && user) {
-      import("@/utils/requestPermission").then(
-        ({ requestNotificationPermission }) => {
-          requestNotificationPermission();
-        }
-      );
+  // useEffect(() => {
+  //   if (!isLoading && user) {
+  //     import("@/utils/requestPermission").then(
+  //       ({ requestNotificationPermission }) => {
+  //         requestNotificationPermission();
+  //       }
+  //     );
 
-      fetch("/api/cron/keep-alive")
-        .then((res) => {
-          if (!res.ok) throw new Error("Keep-alive failed");
-          console.log("✅ Keep-alive pinged");
-        })
-        .catch((err) => {
-          console.error("Error triggering keep-alive:", err);
-        });
-    }
-  }, [isLoading, user]);
+  //     fetch("/api/cron/keep-alive")
+  //       .then((res) => {
+  //         if (!res.ok) throw new Error("Keep-alive failed");
+  //         console.log("✅ Keep-alive pinged");
+  //       })
+  //       .catch((err) => {
+  //         console.error("Error triggering keep-alive:", err);
+  //       });
+  //   }
+  // }, [isLoading, user]);
 
   const handleButtonClick = () => {
     console.log(user);

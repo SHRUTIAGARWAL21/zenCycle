@@ -109,7 +109,7 @@ const ProductivityCalendar = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6  bg-gradient-to-br from-purple-50 to-pink-50  rounded-lg shadow-md min-h-screen">
-      <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-purple-100">
+      <div>
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-purple-800 bg-clip-text text-transparent mb-2">
