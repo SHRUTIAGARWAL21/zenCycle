@@ -4,7 +4,7 @@ import { Clock, Target, TrendingUp } from "lucide-react";
 
 const ProductivityCalendar = () => {
   const [productivityData, setProductivityData] = useState([]);
-  const [hoveredDay, setHoveredDay] = useState(null);
+  const [hoveredDay, setHoveredDay] = useState<{score:number,expectedTime:number,actualTime:number}|null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -20,15 +20,15 @@ const ProductivityCalendar = () => {
       });
   }, []);
 
-  const getDaysInMonth = (month, year) => {
+  const getDaysInMonth = (month: number, year: number) => {
     return new Date(year, month, 0).getDate();
   };
 
-  const getFirstDayOfMonth = (month, year) => {
+  const getFirstDayOfMonth = (month: number, year: number) => {
     return new Date(year, month - 1, 1).getDay();
   };
 
-  const getProductivityColor = (score) => {
+  const getProductivityColor = (score: number) => {
     if (score >= 90)
       return "bg-gradient-to-br from-purple-400 to-purple-500 text-white shadow-lg";
     if (score >= 80)
@@ -42,7 +42,7 @@ const ProductivityCalendar = () => {
     return "bg-gradient-to-br from-red-200 to-red-300 text-red-800 shadow-sm";
   };
 
-  const calculateEfficiency = (expectedTime, actualTime) => {
+  const calculateEfficiency = (expectedTime: number, actualTime: number) => {
     // Better efficiency calculation: lower actual time = higher efficiency
     if (actualTime <= expectedTime) {
       return 100; // Perfect or better than expected
@@ -50,7 +50,7 @@ const ProductivityCalendar = () => {
     return Math.max(0, Math.round((expectedTime / actualTime) * 100));
   };
 
-  const handleMouseEnter = (dayData, event) => {
+  const handleMouseEnter = (dayData: any, event: any) => {
     if (dayData) {
       setHoveredDay(dayData);
       setMousePosition({ x: event.clientX, y: event.clientY });
@@ -61,7 +61,7 @@ const ProductivityCalendar = () => {
     setHoveredDay(null);
   };
 
-  const handleMouseMove = (event) => {
+  const handleMouseMove = (event: any) => {
     if (hoveredDay) {
       setMousePosition({ x: event.clientX, y: event.clientY });
     }
@@ -99,7 +99,7 @@ const ProductivityCalendar = () => {
 
   // Days of the month
   for (let day = 1; day <= daysInMonth; day++) {
-    const dayData = productivityData.find((item) => item.day === day);
+    const dayData = productivityData.find((item: any) => item.day === day);
     calendarDays.push({
       day,
       data: dayData,
@@ -139,7 +139,7 @@ const ProductivityCalendar = () => {
               return <div key={index} className="aspect-square"></div>;
             }
 
-            const { day, data, isToday } = dayInfo;
+            const { day, data = {score:0}, isToday } = dayInfo;
             const hasData = !!data;
 
             return (
@@ -154,7 +154,7 @@ const ProductivityCalendar = () => {
                   ${
                     hasData
                       ? `${getProductivityColor(
-                          data.score
+                          data.score as number
                         )} cursor-pointer hover:shadow-lg border-transparent`
                       : "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200"
                   }
@@ -170,7 +170,7 @@ const ProductivityCalendar = () => {
                 </span>
                 {hasData && (
                   <div className="text-xs mt-1 text-center opacity-90">
-                    <div className="font-semibold">{data.score}%</div>
+                    <div className="font-semibold">{(data.score as number)}%</div>
                   </div>
                 )}
                 {isToday && (
@@ -222,7 +222,7 @@ const ProductivityCalendar = () => {
                 <TrendingUp className="w-3 h-3 text-purple-600" />
                 <span className="text-purple-600">Score: </span>
                 <span className="font-semibold text-purple-800">
-                  {hoveredDay.score}%
+                  {(hoveredDay.score as number)}%
                 </span>
               </div>
 
@@ -230,7 +230,7 @@ const ProductivityCalendar = () => {
                 <Target className="w-3 h-3 text-blue-600" />
                 <span className="text-blue-600">Expected: </span>
                 <span className="font-semibold text-blue-800">
-                  {hoveredDay.expectedTime}h
+                  {(hoveredDay.expectedTime as number)}h
                 </span>
               </div>
 
@@ -238,7 +238,7 @@ const ProductivityCalendar = () => {
                 <Clock className="w-3 h-3 text-green-600" />
                 <span className="text-green-600">Actual: </span>
                 <span className="font-semibold text-green-800">
-                  {hoveredDay.actualTime}h
+                  {(hoveredDay.actualTime as number)}h
                 </span>
               </div>
             </div>

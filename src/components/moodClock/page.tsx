@@ -1,4 +1,4 @@
-export const MoodClock = ({ moodData = [] }) => {
+export const MoodClock = ({ moodData }: { moodData: any[] }) => {
   const moodColors: { [key: string]: string } = {
     happy: "#FFD700",
     sad: "#6495ED",
@@ -13,7 +13,7 @@ export const MoodClock = ({ moodData = [] }) => {
   const centerY = 150;
   const strokeWidth = 20;
 
-  const polarToCartesian = (cx, cy, r, angle) => {
+  const polarToCartesian = (cx: number, cy: number, r: number, angle: number) => {
     const radians = ((angle - 90) * Math.PI) / 180;
     return {
       x: cx + r * Math.cos(radians),
@@ -21,7 +21,7 @@ export const MoodClock = ({ moodData = [] }) => {
     };
   };
 
-  const createArcPath = (cx, cy, r, startAngle, endAngle, sw) => {
+  const createArcPath = (cx: number, cy: number, r: number, startAngle: number, endAngle: number, sw: number) => {
     const inner = r - sw / 2;
     const outer = r + sw / 2;
 
@@ -60,7 +60,7 @@ export const MoodClock = ({ moodData = [] }) => {
   };
 
   const createHourSegments = () => {
-    const moodByHour = {};
+    const moodByHour: { [key: number]: any[] } = {};
     moodData.forEach((m) => {
       const h = new Date(m.createdAt).getHours();
       if (!moodByHour[h]) moodByHour[h] = [];
@@ -73,7 +73,7 @@ export const MoodClock = ({ moodData = [] }) => {
       let mood = "neutral",
         max = 0;
       if (moodByHour[hour]) {
-        const moodSum = {};
+        const moodSum: { [key: string]: number } = {};
         moodByHour[hour].forEach((m) => {
           const type = m.moodType.toLowerCase();
           moodSum[type] = (moodSum[type] || 0) + m.moodLevel;

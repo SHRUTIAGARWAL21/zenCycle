@@ -7,11 +7,12 @@ connect();
 
 export async function GET(
   request: NextRequest,
-  context: { params: { pageNumber: string } }
+  { params }: { params: Promise<{ pageNumber: string }> }
 ) {
   try {
     const userId = await getDataFromToken(request);
-    const page = parseInt(context.params.pageNumber);
+    const { pageNumber } = await params;
+    const page = parseInt(pageNumber);
 
     const journal = await Journal.findOne({ userId, pageNumber: page });
 
@@ -27,11 +28,12 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  context: { params: { pageNumber: string } }
+  { params }: { params: Promise<{ pageNumber: string }> }
 ) {
   try {
     const userId = await getDataFromToken(request);
-    const page = parseInt(context.params.pageNumber);
+    const { pageNumber } = await params;
+    const page = parseInt(pageNumber);
     const { content } = await request.json();
 
     const updated = await Journal.findOneAndUpdate(

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { useAuth } from "./context/AuthContext";
 
-function Feature({ icon, label, isMobile = false }) {
+function Feature({ icon, label, isMobile = false }: { icon: string; label: string; isMobile?: boolean }) {
   return (
     <div
       className={`bg-white rounded-2xl shadow-md px-3 md:px-4 py-2 text-center min-h-[120px] flex flex-col justify-center ${

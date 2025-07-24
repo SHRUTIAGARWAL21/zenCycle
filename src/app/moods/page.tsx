@@ -252,7 +252,7 @@ export default function MoodPage() {
               <>
                 <h2 className="text-sm text-gray-500 mb-1">I'm feeling</h2>
                 <h1 className="text-3xl font-bold text-[#4a3d7c]">
-                  {moodMessageMap[dominantMood] || "neutral"}
+                  {moodMessageMap[dominantMood || "neutral"]}
                 </h1>
               </>
             )}
@@ -285,7 +285,7 @@ export default function MoodPage() {
                 🔥 Daily Streak
               </h3>
               <p className="text-2xl font-bold text-[#695aa4]">
-                {user?.streak ?? 0} days 🔥
+                {user?.Moodstreak ?? 0} days 🔥
               </p>
             </div>
             <Link

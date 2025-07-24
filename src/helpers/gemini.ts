@@ -6,7 +6,6 @@ const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 /**
- 
 Calls the Gemini API with the specified model and ontent.
 @param {string} model - The Gemini model to use.
 @param {string|object} content - The prompt or content to send.
@@ -25,5 +24,3 @@ export async function callGemini(
     throw new Error(error);
   }
 }
-
-module.exports = { callGemini };

@@ -68,10 +68,10 @@ const SkeletonSummary = () => (
 );
 
 const DailySummary = () => {
-  const [summaryData, setSummaryData] = useState(null);
+  const [summaryData, setSummaryData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [expandedSections, setExpandedSections] = useState({});
+  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
 
   const fetchDailySummary = async () => {
     try {
@@ -125,7 +125,7 @@ const DailySummary = () => {
     fetchDailySummary();
   }, []);
 
-  const toggleSection = (sectionId) => {
+  const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) => ({
       ...prev,
       [sectionId]: !prev[sectionId],
@@ -136,13 +136,13 @@ const DailySummary = () => {
     fetchDailySummary();
   };
 
-  const getProductivityColor = (score) => {
+  const getProductivityColor = (score: number) => {
     if (score >= 80) return "text-green-600";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
 
-  const getProgressColor = (progress) => {
+  const getProgressColor = (progress: number) => {
     if (progress >= 80) return "bg-green-400";
     if (progress >= 50) return "bg-yellow-400";
     return "bg-red-400";
@@ -284,7 +284,7 @@ const DailySummary = () => {
                 <div className="mt-2 p-3 bg-gradient-to-r from-purple-100/80 to-pink-100/80 backdrop-blur-sm rounded-lg border border-purple-200/50 shadow-sm">
                   {section.id === "completed" && (
                     <div className="space-y-2">
-                      {section.content.map((task, index) => (
+                      {section.content.map((task: any, index: number) => (
                         <div
                           key={index}
                           className="flex items-center justify-between p-2 bg-white/70 rounded-md"
@@ -314,7 +314,7 @@ const DailySummary = () => {
 
                   {section.id === "pending" && (
                     <div className="space-y-2">
-                      {section.content.map((task, index) => (
+                      {section.content.map((task: any, index: number) => (
                         <div key={index} className="p-2 bg-white/70 rounded-md">
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-sm font-medium text-gray-800">
@@ -370,7 +370,7 @@ const DailySummary = () => {
 
                   {(section.id === "gaps" || section.id === "suggestions") && (
                     <div className="space-y-2">
-                      {section.content.map((item, index) => (
+                      {section.content.map((item: any, index: number) => (
                         <div
                           key={index}
                           className="flex items-start gap-2 p-2 bg-white/70 rounded-md"
